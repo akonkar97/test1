@@ -33,3 +33,19 @@ jobs:
       run: |
         cd /home/ros2_ws/
         . /opt/ros/galactic/local_setup.sh
+        
+    - name: Build Coverage
+      working-directory: /home/ros2_ws/build
+      run: make
+
+    # Run test suite and compute code coverage
+    - name: Run Test Coverage
+      working-directory: /home/ros2_ws/build
+      run: make code_coverage
+      
+    # Upload coverage result to Coverage.io 
+    - name: Upload result to Coveralls.io
+      uses: coverallsapp/github-action@1.1.3
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: /home/ros2_ws/build/coverage.info.cleaned
