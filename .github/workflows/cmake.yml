@@ -24,7 +24,7 @@ jobs:
           gnupg2 \
           lsb-release \
           python3-colcon-ros
-        cd /home/ros2_ws/src/
+        cd ${{github.workspace}}/ros2_ws/src/
         rosdep update
         rosdep install --from-paths ./ -i -y --rosdistro galactic \
           --ignore-src
