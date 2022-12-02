@@ -1,0 +1,17 @@
+launch:
+- arg:
+    name: "record_rosbag"
+    default: "rec"
+
+- arg:
+    name: "rosbag_name"
+    default: "rec"
+
+- node:
+    pkg: "cpp_pubsub"
+    exec: "talker"
+    name: "sim"
+
+- executable:
+    cmd: "ros2 bag record -a --output src/cpp_pubsub/$(var rosbag_name)"
+    if: 

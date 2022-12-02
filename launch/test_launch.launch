@@ -1,0 +1,4 @@
+<launch>
+   <node pkg="cpp_pubsub" exec="server_s" name="sim" />
+   <node pkg="cpp_pubsub" exec="cpp_pubsub_test" name="sim" />
+</launch>
