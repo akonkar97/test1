@@ -1,0 +1,58 @@
+name: Gazebo ros2 control CI
+
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: osrf/ros:galactic-desktop
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup colcon workspace
+      id: configure
+      run: |
+        cd ..
+        mkdir -p /home/ros2_ws/src
+        cp -r test1 /home/ros2_ws/src/
+        apt-get update && apt-get upgrade -q -y
+        apt-get update && apt-get install -q -y --no-install-recommends \
+          dirmngr \
+          gnupg2 \
+          lsb-release \
+          python3-colcon-ros
+        cd /home/ros2_ws/src/
+        rosdep update
+        rosdep install --from-paths ./ -i -y --rosdistro galactic \
+          --ignore-src
+    - name: Build project
+      id: build
+      run: |
+        cd /home/ros2_ws/
+        . /opt/ros/galactic/local_setup.sh
+    
+    # Install some system pacakges
+    - name: Install packages
+      run: sudo apt install -y lcov
+
+    # Run CMake to setup compilation flags
+    - name: Configure Coverage CMake 
+      run: cmake -D COVERAGE=ON -D CMAKE_BUILD_TYPE=Debug -B /home/ros2_ws/build 
+    - name: Build Coverage
+      working-directory: /home/ros2_ws/build
+      run: make
+
+    # Run test suite and compute code coverage
+    - name: Run Test Coverage
+      working-directory: /home/ros2_ws/build
+      run: make code_coverage
+      
+    # Upload coverage result to Coverage.io 
+    - name: Upload result to Coveralls.io
+      uses: coverallsapp/github-action@1.1.3
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: /home/ros2_ws/build/coverage.info.cleaned
