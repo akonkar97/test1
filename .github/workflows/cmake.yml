@@ -32,6 +32,7 @@ jobs:
       id: build
       run: |
         cd /home/ros2_ws/
+        colcon build
         . /opt/ros/galactic/local_setup.sh
     
     # Install some system pacakges
