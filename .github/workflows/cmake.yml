@@ -7,49 +7,25 @@ jobs:
   build:
 
     runs-on: ubuntu-20.04
-
-    strategy:
-      matrix:
-        container:
-          - image: 'ros:galactic'
-            env:
-              PYTHON_VERSION:
-              ROS_DISTRO: galactic
-
-    container: ${{ matrix.container }}
+    steps:
+      - name: Setup ROS
+        uses: ros-tooling/setup-ros@v0.4
+      - run: vcs --help
 
     defaults:
       run:
         shell: bash
-
+        
+  build_docker:
+    runs-on: ubuntu-20.04
+    container:
+      image: ubuntu:focal
     steps:
-      - uses: actions/checkout@v2
+      - uses: ros-tooling/setup-ros@v0.4
         with:
-          path: src/${{ github.workspace }}
-
-      - name: Remove broken apt repos [Ubuntu]
-        run: |
-          for apt_file in `grep -lr microsoft /etc/apt/sources.list.d/`; do sudo rm $apt_file; done
-      - name: Install ROS package dependencies
-        run: |
-          sudo apt update && sudo apt -y install locales
-          sudo locale-gen en_US en_US.UTF-8
-          sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-          export LANG=en_US.UTF-8
-          sudo apt install -y software-properties-common
-          sudo add-apt-repository universe
-          sudo apt update && sudo apt install -y curl
-          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
-          sudo apt update
-          sudo apt -y upgrade
-          sudo apt install -y ros-galactic-desktop
-          sudo apt install -y ros-dev-tools
-          
-          #sudo apt install -y python$PYTHON_VERSION-osrf-pycommon
-          #sudo apt install -y python$PYTHON_VERSION-catkin-tools
-          #python$PYTHON_VERSION -m pip install --upgrade pip
-          #python3 -m pip install --upgrade pip
+            use-ros2-testing: true
+            required-ros-distributions: humble
+      - run: vcs --help
           
 #       - name: Create workspace
 #         run: |
