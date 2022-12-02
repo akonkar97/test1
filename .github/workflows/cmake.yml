@@ -33,7 +33,14 @@ jobs:
       run: |
         cd /home/ros2_ws/
         . /opt/ros/galactic/local_setup.sh
-        
+    
+    # Install some system pacakges
+    - name: Install packages
+      run: sudo apt install -y lcov
+
+    # Run CMake to setup compilation flags
+    - name: Configure Coverage CMake 
+      run: cmake -D COVERAGE=ON -D CMAKE_BUILD_TYPE=Debug -B ${{github.workspace}}/build 
     - name: Build Coverage
       working-directory: /home/ros2_ws/build
       run: make
