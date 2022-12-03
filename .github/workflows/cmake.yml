@@ -27,7 +27,7 @@ jobs:
     - name: Build project
       id: build
       run: |
-        source /opt/ros/galactic/local_setup.sh
+        . /opt/ros/galactic/local_setup.sh
         colcon build --packages-select cpp_pubsub
 
     - name: Unit tests
