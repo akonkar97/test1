@@ -39,8 +39,8 @@ jobs:
         . /opt/ros/galactic/local_setup.sh
         colcon build --cmake-args -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} --coverage" -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} --coverage"
         lcov --no-external --capture --initial --directory . --output-file ~/ros2_base.info
-        colcon test --packages-select test1
-        lcov --no-external --capture --directory . --output-file ${{github.workspace}}/ros2.info
+        colcon test --packages-select cpp_pubsub
+        lcov --no-external --capture --directory . --output-file ~/ros2.info
         lcov --add-tracefile ${{github.workspace}}/ros2_base.info --add-tracefile ~/ros2.info --output-file ~/ros2_coverage.info
         mkdir -p coverage
         genhtml ~/ros2_coverage.info --output-directory coverage
