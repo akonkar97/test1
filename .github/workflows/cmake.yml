@@ -15,21 +15,18 @@ jobs:
     - name: Setup colcon workspace
       id: configure
       run: |
-        cd ${{github.workspace}}
         apt-get update && apt-get upgrade -q -y
         apt-get update && apt-get install -q -y --no-install-recommends \
           dirmngr \
           gnupg2 \
           lsb-release \
           python3-colcon-ros
-        cd ${{github.workspace}}
         rosdep update
         rosdep install --from-paths ./ -i -y --rosdistro galactic \
           --ignore-src
     - name: Build project
       id: build
       run: |
-        cd ${{github.workspace}}
         source /opt/ros/galactic/local_setup.sh
         colcon build --packages-select cpp_pubsub
 
@@ -39,13 +36,12 @@ jobs:
         
     - name: Coveralls setup
       run: |  
-        cd ${{github.workspace}}
         source /opt/ros/galactic/local_setup.sh
         colcon build --cmake-args -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} --coverage" -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} --coverage"
         lcov --no-external --capture --initial --directory . --output-file cd ${{github.workspace}}/ros2_base.info
         colcon test --packages-select test1
         lcov --no-external --capture --directory . --output-file cd ${{github.workspace}}/ros2.info
-        lcov --add-tracefile ${{github.workspace}}/ros2_base.info --add-tracefile /home/ros2_ws/ros2.info --output-file cd ${{github.workspace}}/ros2_coverage.info
+        lcov --add-tracefile ${{github.workspace}}/ros2_base.info --add-tracefile ${{github.workspace}}/ros2.info --output-file cd ${{github.workspace}}/ros2_coverage.info
         mkdir -p coverage
         genhtml cd ${{github.workspace}}/ros2_coverage.info --output-directory coverage
 
