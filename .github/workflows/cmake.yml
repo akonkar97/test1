@@ -16,40 +16,43 @@ jobs:
       id: configure
       run: |
         cd ..
-        mkdir -p ${{github.workspace}}/ros2_ws/src
-        cp -r test1 ${{github.workspace}}/ros2_ws/src/
+        mkdir -p /home/ros2_ws/src
+        cp -r test1 /home/ros2_ws/src/
         apt-get update && apt-get upgrade -q -y
         apt-get update && apt-get install -q -y --no-install-recommends \
           dirmngr \
           gnupg2 \
           lsb-release \
           python3-colcon-ros
-        cd ${{github.workspace}}/ros2_ws/src/
+        cd /home/ros2_ws/src/
         rosdep update
         rosdep install --from-paths ./ -i -y --rosdistro galactic \
           --ignore-src
     - name: Build project
       id: build
       run: |
-        cd ${{github.workspace}}/ros2_ws/
+        cd /home/ros2_ws/
         . /opt/ros/galactic/local_setup.sh
         colcon build --packages-select test1
 
     - name: Unit tests
       run: |
         sudo apt install -y lcov
+        
+    - name: Coveralls setup
+      run: |
         . /opt/ros/galactic/setup.bash
-        cd ${{github.workspace}}/ros2_ws
+        cd /home/ros2_ws
         colcon build --cmake-args -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} --coverage" -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} --coverage"
-        lcov --no-external --capture --initial --directory . --output-file ${{github.workspace}}/ros2_ws/ros2_base.info
+        lcov --no-external --capture --initial --directory . --output-file /home/ros2_ws/ros2_base.info
         colcon test --packages-select test1
-        lcov --no-external --capture --directory . --output-file ${{github.workspace}}/ros2_ws/ros2.info
-        lcov --add-tracefile ${{github.workspace}}/ros2_base.info --add-tracefile ${{github.workspace}}/ros2_ws/ros2.info --output-file ${{github.workspace}}/ros2_ws/ros2_coverage.info
+        lcov --no-external --capture --directory . --output-file /home/ros2_ws/ros2.info
+        lcov --add-tracefile ${{github.workspace}}/ros2_base.info --add-tracefile /home/ros2_ws/ros2.info --output-file /home/ros2_ws/ros2_coverage.info
         mkdir -p coverage
-        genhtml ${{github.workspace}}/ros2_ws/ros2_coverage.info --output-directory coverage
+        genhtml /home/ros2_ws/ros2_coverage.info --output-directory coverage
 
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ${{ github.workspace }}/ros2_ws/coverage.info
+        path-to-lcov: /home/ros2_ws/coverage.info
