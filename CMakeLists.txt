@@ -23,22 +23,22 @@ ament_target_dependencies(talker rclcpp std_msgs)
 add_executable(listener src/subscriber_member_function.cpp)
 ament_target_dependencies(listener rclcpp std_msgs)
 
-add_executable(server_s src/add_two_ints_server.cpp)
-ament_target_dependencies(server_s rclcpp)
+#add_executable(server_s src/add_two_ints_server.cpp)
+#ament_target_dependencies(server_s rclcpp)
 
-add_executable(client_s src/add_two_ints_client.cpp)
-ament_target_dependencies(client_s rclcpp)
+#add_executable(client_s src/add_two_ints_client.cpp)
+#ament_target_dependencies(client_s rclcpp)
 
-rosidl_target_interfaces(server_s
-  ${PROJECT_NAME} "rosidl_typesupport_cpp")
-rosidl_target_interfaces(client_s
-  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+#rosidl_target_interfaces(server_s
+#  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+#rosidl_target_interfaces(client_s
+#  ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 install(TARGETS
   talker
   listener
-  server_s
-  client_s
+#  server_s
+#  client_s
   DESTINATION lib/${PROJECT_NAME})
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -55,8 +55,7 @@ if(BUILD_TESTING)
   set(ament_cmake_uncrustify_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
   set(TESTFILES
-    test/test.cpp
-    server_s)
+    test/test.cpp)
   ament_add_gtest(${PROJECT_NAME}_test ${TESTFILES})
 
   rosidl_target_interfaces(${PROJECT_NAME}_test
