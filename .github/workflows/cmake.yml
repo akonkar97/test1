@@ -33,7 +33,7 @@ jobs:
       run: |
         cd /home/ros2_ws/
         . /opt/ros/galactic/local_setup.sh
-        colcon build --packages-select test1
+        colcon build --packages-select cpp_pubsub
 
     - name: Unit tests
       run: |
