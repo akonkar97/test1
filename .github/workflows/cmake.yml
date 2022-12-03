@@ -36,7 +36,7 @@ jobs:
         
     - name: Coveralls setup
       run: |  
-        source /opt/ros/galactic/local_setup.sh
+        . /opt/ros/galactic/local_setup.sh
         colcon build --cmake-args -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} --coverage" -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} --coverage"
         lcov --no-external --capture --initial --directory . --output-file cd ${{github.workspace}}/ros2_base.info
         colcon test --packages-select test1
